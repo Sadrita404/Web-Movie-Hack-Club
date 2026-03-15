@@ -96,6 +96,73 @@ function initParticles() {
     }
 }
 
+// --- SNAKE GAME LOGIC ---
+const sCanvas = document.getElementById('snake-game');
+const sCtx = sCanvas.getContext('2d');
+const scoreEl = document.getElementById('score-board');
+let score = 0;
+let box = 20;
+let snake = [{ x: 9 * box, y: 10 * box }];
+let food = { x: Math.floor(Math.random() * 15) * box, y: Math.floor(Math.random() * 15) * box };
+let d;
+
+document.addEventListener("keydown", direction);
+function direction(event) {
+    if(event.keyCode == 37 && d != "RIGHT") d = "LEFT";
+    else if(event.keyCode == 38 && d != "DOWN") d = "UP";
+    else if(event.keyCode == 39 && d != "LEFT") d = "RIGHT";
+    else if(event.keyCode == 40 && d != "UP") d = "DOWN";
+}
+
+function drawSnake() {
+    sCtx.clearRect(0, 0, sCanvas.width, sCanvas.height);
+    const isLight = document.body.classList.contains('light-mode');
+    
+    for(let i = 0; i < snake.length; i++) {
+        sCtx.fillStyle = (i == 0) ? (isLight ? "#00008B" : "#facc15") : (isLight ? "#4169E1" : "#ffffff");
+        sCtx.fillRect(snake[i].x, snake[i].y, box, box);
+        sCtx.strokeStyle = isLight ? "#fff9e6" : "#020617";
+        sCtx.strokeRect(snake[i].x, snake[i].y, box, box);
+    }
+
+    sCtx.fillStyle = "#ec4899";
+    sCtx.fillRect(food.x, food.y, box, box);
+
+    let snakeX = snake[0].x;
+    let snakeY = snake[0].y;
+
+    if( d == "LEFT") snakeX -= box;
+    if( d == "UP") snakeY -= box;
+    if( d == "RIGHT") snakeX += box;
+    if( d == "DOWN") snakeY += box;
+
+    if(snakeX == food.x && snakeY == food.y) {
+        score++;
+        scoreEl.innerHTML = "Score: " + score;
+        food = { x: Math.floor(Math.random() * 15) * box, y: Math.floor(Math.random() * 15) * box };
+    } else {
+        snake.pop();
+    }
+
+    let newHead = { x: snakeX, y: snakeY };
+
+    if(snakeX < 0 || snakeX >= sCanvas.width || snakeY < 0 || snakeY >= sCanvas.height || collision(newHead, snake)) {
+        clearInterval(game);
+        alert("Game Over! Score: " + score);
+        location.reload();
+    }
+
+    snake.unshift(newHead);
+}
+
+function collision(head, array) {
+    for(let i = 0; i < array.length; i++) {
+        if(head.x == array[i].x && head.y == array[i].y) return true;
+    }
+    return false;
+}
+let game = setInterval(drawSnake, 150);
+
 function animate() {
     requestAnimationFrame(animate);
     stars.rotation.y += 0.001;
@@ -113,37 +180,21 @@ function animate() {
 
     particles.forEach(p => {
         let tx, ty;
-
         if (particleState === "assembling") {
-            tx = p.targetX;
-            ty = p.targetY;
+            tx = p.targetX; ty = p.targetY;
+            if (stateTimer > 30) { particleState = "holding"; stateTimer = 0; }
+        } else if (particleState === "holding") {
+            tx = p.targetX; ty = p.targetY;
+            if (stateTimer > 30) { particleState = "dispersing"; stateTimer = 0; }
+        } else if (particleState === "dispersing") {
+            tx = p.originX; ty = p.originY;
             if (stateTimer > 30) { 
-                particleState = "holding"; 
-                stateTimer = 0; 
-            }
-        } 
-        else if (particleState === "holding") {
-            tx = p.targetX;
-            ty = p.targetY;
-            if (stateTimer > 30) { 
-                particleState = "dispersing"; 
-                stateTimer = 0; 
-            }
-        } 
-        else if (particleState === "dispersing") {
-            tx = p.originX;
-            ty = p.originY;
-            if (stateTimer > 30) { 
-                particleState = "assembling"; 
-                stateTimer = 0; 
-                p.originX = Math.random() * pCanvas.width;
-                p.originY = Math.random() * pCanvas.height;
+                particleState = "assembling"; stateTimer = 0; 
+                p.originX = Math.random() * pCanvas.width; p.originY = Math.random() * pCanvas.height;
             }
         }
-
         p.x += (tx - p.x) * 0.15;
         p.y += (ty - p.y) * 0.15;
-
         pCtx.fillStyle = document.body.classList.contains('light-mode') ? "#00008B" : "#facc15";
         pCtx.fillRect(p.x, p.y, 2, 2);
     });
