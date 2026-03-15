@@ -14,7 +14,7 @@ starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
 const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 0.1, color: 0xffffff }));
 scene.add(stars);
 
-// Objects
+// --- Objects ---
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(2, 32, 32), new THREE.MeshBasicMaterial({ color: 0x3b82f6, wireframe: true }));
 scene.add(sphere);
 
@@ -22,11 +22,14 @@ const torus = new THREE.Mesh(new THREE.TorusKnotGeometry(1, 0.4, 100, 16), new T
 torus.position.x = 50; 
 scene.add(torus);
 
-const lattice = new THREE.Points(new THREE.IcosahedronGeometry(2, 1), new THREE.PointsMaterial({ color: 0xfacc15, size: 0.1 }));
+// New Shapes with Dynamic Materials
+const latticeMat = new THREE.PointsMaterial({ color: 0xfacc15, size: 0.1 });
+const lattice = new THREE.Points(new THREE.IcosahedronGeometry(2, 1), latticeMat);
 lattice.position.x = 50;
 scene.add(lattice);
 
-const quantum = new THREE.Mesh(new THREE.OctahedronGeometry(2, 0), new THREE.MeshNormalMaterial({ wireframe: true }));
+const quantumMat = new THREE.MeshNormalMaterial({ wireframe: true, transparent: true, opacity: 0.8 });
+const quantum = new THREE.Mesh(new THREE.OctahedronGeometry(2, 0), quantumMat);
 quantum.position.x = 50;
 scene.add(quantum);
 
@@ -43,10 +46,38 @@ camera.position.z = 10;
 let isUserRotating = false;
 let targetRot = 0;
 
+// --- Theme Switch Logic ---
+const themeBtn = document.getElementById('theme-switch');
+const themeIcon = document.getElementById('theme-icon');
+
+themeBtn.addEventListener('click', () => {
+    const body = document.body;
+    const isDark = body.classList.contains('dark-mode');
+
+    if (isDark) {
+        body.classList.replace('dark-mode', 'light-mode');
+        themeIcon.setAttribute('data-lucide', 'sun');
+        stars.material.color.setHex(0x000000);
+        
+        // Change New Shapes to Dark Blue for visibility in Light Mode
+        lattice.material.color.setHex(0x00008B); 
+        sphere.material.color.setHex(0x1e40af); // Darker blue sphere
+    } else {
+        body.classList.replace('light-mode', 'dark-mode');
+        themeIcon.setAttribute('data-lucide', 'moon');
+        stars.material.color.setHex(0xffffff);
+        
+        // Change New Shapes back to Accent Yellow
+        lattice.material.color.setHex(0xfacc15);
+        sphere.material.color.setHex(0x3b82f6);
+    }
+    lucide.createIcons();
+});
+
+// --- Scroll & Animation Logic ---
 window.addEventListener('scroll', () => {
     const scrollY = window.scrollY, vh = window.innerHeight;
     
-    // Scroll Triggers
     sphere.position.y = 3; 
     sphere.position.x = scrollY < vh ? -(scrollY / vh) * 15 : -50;
 
@@ -63,29 +94,13 @@ window.addEventListener('scroll', () => {
     else cube.position.y = -50;
 });
 
+// --- Rest of your original code (Snake, Particles, Sliders) stays exactly the same ---
 const slider = document.getElementById('box-slider');
 slider.addEventListener('input', (e) => { 
     isUserRotating = true;
     targetRot = parseFloat(e.target.value); 
 });
 
-const themeBtn = document.getElementById('theme-switch');
-const themeIcon = document.getElementById('theme-icon');
-themeBtn.addEventListener('click', () => {
-    const body = document.body;
-    if (body.classList.contains('dark-mode')) {
-        body.classList.replace('dark-mode', 'light-mode');
-        themeIcon.setAttribute('data-lucide', 'sun');
-        stars.material.color.setHex(0x000000);
-    } else {
-        body.classList.replace('light-mode', 'dark-mode');
-        themeIcon.setAttribute('data-lucide', 'moon');
-        stars.material.color.setHex(0xffffff);
-    }
-    lucide.createIcons();
-});
-
-// Particles
 const pCanvas = document.getElementById('particle-canvas');
 const pCtx = pCanvas.getContext('2d');
 let particles = [];
@@ -117,7 +132,6 @@ function initParticles() {
     }
 }
 
-// Snake Game
 const sCanvas = document.getElementById('snake-game');
 const sCtx = sCanvas.getContext('2d');
 const scoreEl = document.getElementById('score-board');
@@ -127,31 +141,26 @@ let snake = [{ x: 9 * box, y: 10 * box }];
 let food = { x: Math.floor(Math.random() * 15) * box, y: Math.floor(Math.random() * 15) * box };
 let d;
 
-document.addEventListener("keydown", direction);
-function direction(event) {
-    if(event.keyCode == 37 && d != "RIGHT") d = "LEFT";
-    else if(event.keyCode == 38 && d != "DOWN") d = "UP";
-    else if(event.keyCode == 39 && d != "LEFT") d = "RIGHT";
-    else if(event.keyCode == 40 && d != "UP") d = "DOWN";
-}
+document.addEventListener("keydown", (e) => {
+    if(e.keyCode == 37 && d != "RIGHT") d = "LEFT";
+    else if(e.keyCode == 38 && d != "DOWN") d = "UP";
+    else if(e.keyCode == 39 && d != "LEFT") d = "RIGHT";
+    else if(e.keyCode == 40 && d != "UP") d = "DOWN";
+});
 
 function drawSnake() {
     sCtx.clearRect(0, 0, sCanvas.width, sCanvas.height);
     const isLight = document.body.classList.contains('light-mode');
-    
     for(let i = 0; i < snake.length; i++) {
         sCtx.fillStyle = (i == 0) ? (isLight ? "#00008B" : "#facc15") : (isLight ? "#4169E1" : "#ffffff");
         sCtx.fillRect(snake[i].x, snake[i].y, box, box);
         sCtx.strokeStyle = isLight ? "#fff9e6" : "#020617";
         sCtx.strokeRect(snake[i].x, snake[i].y, box, box);
     }
-
     sCtx.fillStyle = "#ec4899";
     sCtx.fillRect(food.x, food.y, box, box);
-
     let snakeX = snake[0].x;
     let snakeY = snake[0].y;
-
     if( d == "LEFT") snakeX -= box;
     if( d == "UP") snakeY -= box;
     if( d == "RIGHT") snakeX += box;
@@ -161,25 +170,19 @@ function drawSnake() {
         score++;
         scoreEl.innerHTML = "Score: " + score;
         food = { x: Math.floor(Math.random() * 15) * box, y: Math.floor(Math.random() * 15) * box };
-    } else {
-        snake.pop();
-    }
+    } else { snake.pop(); }
 
     let newHead = { x: snakeX, y: snakeY };
-
     if(snakeX < 0 || snakeX >= sCanvas.width || snakeY < 0 || snakeY >= sCanvas.height || collision(newHead, snake)) {
         clearInterval(game);
         alert("Game Over! Score: " + score);
         location.reload();
     }
-
     snake.unshift(newHead);
 }
 
 function collision(head, array) {
-    for(let i = 0; i < array.length; i++) {
-        if(head.x == array[i].x && head.y == array[i].y) return true;
-    }
+    for(let i = 0; i < array.length; i++) { if(head.x == array[i].x && head.y == array[i].y) return true; }
     return false;
 }
 let game = setInterval(drawSnake, 150);
@@ -201,7 +204,6 @@ function animate() {
     
     pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
     stateTimer++;
-
     particles.forEach(p => {
         let tx, ty;
         if (particleState === "assembling") {
@@ -217,19 +219,14 @@ function animate() {
                 p.originX = Math.random() * pCanvas.width; p.originY = Math.random() * pCanvas.height;
             }
         }
-        p.x += (tx - p.x) * 0.15;
-        p.y += (ty - p.y) * 0.15;
+        p.x += (tx - p.x) * 0.15; p.y += (ty - p.y) * 0.15;
         pCtx.fillStyle = document.body.classList.contains('light-mode') ? "#00008B" : "#facc15";
         pCtx.fillRect(p.x, p.y, 2, 2);
     });
-
     renderer.render(scene, camera);
 }
 
-initParticles(); 
-animate();
-lucide.createIcons();
-
+initParticles(); animate(); lucide.createIcons();
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
