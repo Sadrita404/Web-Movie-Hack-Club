@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 
-// --- SCENE SETUP (Sphere, Torus, Stars) ---
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -22,7 +21,6 @@ const torus = new THREE.Mesh(new THREE.TorusKnotGeometry(1, 0.4, 100, 16), new T
 torus.position.x = 50; 
 scene.add(torus);
 
-// --- CUBE & SLIDER ---
 const textureLoader = new THREE.TextureLoader();
 const proxyUrl = 'https://images.weserv.nl/?url=drive.google.com/uc?id=1BY_aOeVS9yY0EMhG40TKfOUVnbwBpObB';
 const cube = new THREE.Mesh(new THREE.BoxGeometry(3.5, 3.5, 3.5), new THREE.MeshStandardMaterial({ color: 0xffffff }));
@@ -51,7 +49,6 @@ slider.addEventListener('input', (e) => {
     targetRot = parseFloat(e.target.value); 
 });
 
-// --- THEME TOGGLE ---
 const themeBtn = document.getElementById('theme-switch');
 const themeIcon = document.getElementById('theme-icon');
 themeBtn.addEventListener('click', () => {
@@ -68,7 +65,6 @@ themeBtn.addEventListener('click', () => {
     lucide.createIcons();
 });
 
-// --- NEW PARTICLE LOOP LOGIC ---
 const pCanvas = document.getElementById('particle-canvas');
 const pCtx = pCanvas.getContext('2d');
 let particles = [];
@@ -121,7 +117,6 @@ function animate() {
         if (particleState === "assembling") {
             tx = p.targetX;
             ty = p.targetY;
-            // 0.5 sec (30 frames)
             if (stateTimer > 30) { 
                 particleState = "holding"; 
                 stateTimer = 0; 
@@ -130,7 +125,6 @@ function animate() {
         else if (particleState === "holding") {
             tx = p.targetX;
             ty = p.targetY;
-            // 0.5 sec (30 frames)
             if (stateTimer > 30) { 
                 particleState = "dispersing"; 
                 stateTimer = 0; 
@@ -139,7 +133,6 @@ function animate() {
         else if (particleState === "dispersing") {
             tx = p.originX;
             ty = p.originY;
-            // 0.5 sec (30 frames)
             if (stateTimer > 30) { 
                 particleState = "assembling"; 
                 stateTimer = 0; 
@@ -148,11 +141,10 @@ function animate() {
             }
         }
 
-        // Increased speed (0.15) for shorter duration
         p.x += (tx - p.x) * 0.15;
         p.y += (ty - p.y) * 0.15;
 
-        pCtx.fillStyle = "#facc15";
+        pCtx.fillStyle = document.body.classList.contains('light-mode') ? "#00008B" : "#facc15";
         pCtx.fillRect(p.x, p.y, 2, 2);
     });
 
