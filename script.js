@@ -96,7 +96,6 @@ function initParticles() {
     }
 }
 
-// --- SNAKE GAME LOGIC ---
 const sCanvas = document.getElementById('snake-game');
 const sCtx = sCanvas.getContext('2d');
 const scoreEl = document.getElementById('score-board');

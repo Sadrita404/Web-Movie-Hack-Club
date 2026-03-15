@@ -57,6 +57,19 @@ body.light-mode { background-color: var(--bg-light); color: var(--text-light); }
 body.dark-mode .glass-card { background: var(--glass-dark); }
 body.light-mode .glass-card { background: var(--glass-light); color: var(--text-light); border: 1px solid rgba(0,0,0,0.1); }
 
+/* Added Object Data Styling */
+.object-data {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    text-align: left;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+body.light-mode .object-data { border-top: 1px solid rgba(0,0,0,0.1); }
+.object-data p { margin: 5px 0; }
+.object-data strong { color: var(--accent); }
+
 .flex-container { display: flex; align-items: center; gap: 15px; }
 #cube-ui-area { height: 150px; width: 150px; }
 input[type="range"] { width: 100px; accent-color: var(--accent); cursor: pointer; }
@@ -66,7 +79,6 @@ input[type="range"] { width: 100px; accent-color: var(--accent); cursor: pointer
 .social-icon { color: inherit; transition: 0.3s; }
 .social-icon:hover { color: var(--accent); transform: translateY(-3px); }
 
-/* Snake Game Styling */
 .snake-container h3 { color: var(--accent); margin-bottom: 10px; }
 #snake-game { 
     background: rgba(0,0,0,0.2); 
