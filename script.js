@@ -14,12 +14,21 @@ starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
 const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 0.1, color: 0xffffff }));
 scene.add(stars);
 
+// Objects
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(2, 32, 32), new THREE.MeshBasicMaterial({ color: 0x3b82f6, wireframe: true }));
 scene.add(sphere);
 
 const torus = new THREE.Mesh(new THREE.TorusKnotGeometry(1, 0.4, 100, 16), new THREE.MeshStandardMaterial({ color: 0xec4899 }));
 torus.position.x = 50; 
 scene.add(torus);
+
+const lattice = new THREE.Points(new THREE.IcosahedronGeometry(2, 1), new THREE.PointsMaterial({ color: 0xfacc15, size: 0.1 }));
+lattice.position.x = 50;
+scene.add(lattice);
+
+const quantum = new THREE.Mesh(new THREE.OctahedronGeometry(2, 0), new THREE.MeshNormalMaterial({ wireframe: true }));
+quantum.position.x = 50;
+scene.add(quantum);
 
 const textureLoader = new THREE.TextureLoader();
 const proxyUrl = 'https://images.weserv.nl/?url=drive.google.com/uc?id=1BY_aOeVS9yY0EMhG40TKfOUVnbwBpObB';
@@ -37,13 +46,20 @@ let targetRot = 0;
 window.addEventListener('scroll', () => {
     const scrollY = window.scrollY, vh = window.innerHeight;
     
-    // Moved sphere.position.y to 3 to keep it above the text box
+    // Scroll Triggers
     sphere.position.y = 3; 
-    sphere.position.x = -(scrollY / vh) * 15;
+    sphere.position.x = scrollY < vh ? -(scrollY / vh) * 15 : -50;
 
     if (scrollY > vh * 0.7 && scrollY < vh * 1.8) torus.position.x = 8 - ((scrollY - vh) / vh) * 15;
     else torus.position.x = 50;
-    if (scrollY > vh * 2.0 && scrollY < vh * 3.2) cube.position.y = 0;
+
+    if (scrollY > vh * 1.9 && scrollY < vh * 3.0) lattice.position.x = 8 - ((scrollY - vh * 2.2) / vh) * 15;
+    else lattice.position.x = 50;
+
+    if (scrollY > vh * 3.1 && scrollY < vh * 4.2) quantum.position.x = 8 - ((scrollY - vh * 3.4) / vh) * 15;
+    else quantum.position.x = 50;
+
+    if (scrollY > vh * 4.5 && scrollY < vh * 6.0) cube.position.y = 0;
     else cube.position.y = -50;
 });
 
@@ -69,6 +85,7 @@ themeBtn.addEventListener('click', () => {
     lucide.createIcons();
 });
 
+// Particles
 const pCanvas = document.getElementById('particle-canvas');
 const pCtx = pCanvas.getContext('2d');
 let particles = [];
@@ -100,6 +117,7 @@ function initParticles() {
     }
 }
 
+// Snake Game
 const sCanvas = document.getElementById('snake-game');
 const sCtx = sCanvas.getContext('2d');
 const scoreEl = document.getElementById('score-board');
@@ -170,6 +188,9 @@ function animate() {
     requestAnimationFrame(animate);
     stars.rotation.y += 0.001;
     sphere.rotation.y += 0.005;
+    lattice.rotation.x += 0.01;
+    lattice.rotation.y += 0.01;
+    quantum.rotation.z += 0.01;
 
     if (!isUserRotating) {
         cube.rotation.y += 0.01;

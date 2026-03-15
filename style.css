@@ -57,7 +57,6 @@ body.light-mode { background-color: var(--bg-light); color: var(--text-light); }
 body.dark-mode .glass-card { background: var(--glass-dark); }
 body.light-mode .glass-card { background: var(--glass-light); color: var(--text-light); border: 1px solid rgba(0,0,0,0.1); }
 
-/* Added Object Data Styling */
 .object-data {
     margin-top: 20px;
     padding-top: 20px;
