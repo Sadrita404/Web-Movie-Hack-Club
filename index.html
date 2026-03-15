@@ -11,45 +11,58 @@
 
     <div id="canvas-container"></div>
 
-    <div id="theme-switch" title="Toggle Day/Night">
+    <div id="theme-switch" class="toggle-btn">
         <i data-lucide="moon" id="theme-icon"></i>
     </div>
 
     <div class="content">
         <section class="page-section">
-            <div class="blog-container left">
-                <div class="glass-card big">
-                    <h2>The Digital Void</h2>
-                    <p>Welcome to the core. This hollow sphere represents the blueprint of 3D architecture. As you scroll, notice how the background stars accelerate, creating a warp-speed effect that transitions you through the digital dimensions of this portfolio.</p>
-                </div>
-            </div>
-            <div class="placeholder"></div>
-        </section>
-
-        <section class="page-section">
-            <div class="placeholder"></div>
-            <div class="blog-container right">
-                <div class="glass-card big">
-                    <h2>Geometric Flow</h2>
-                    <p>The Torus Knot symbolizes the complexity of logic and interconnected systems. By increasing the spacing between these sections, we allow the 3D geometry to breathe, giving the user a moment of visual clarity before moving to the next insight.</p>
-                </div>
+            <div class="glass-card big">
+                <span class="badge">01</span>
+                <h2>The Digital Void</h2>
+                <p>Blueprint of 3D architecture. Scroll to see the warp-speed effect.</p>
             </div>
         </section>
 
         <section class="page-section">
-            <div class="box-interface">
-                <div class="glass-card big full">
-                    <h2>Identity Cube</h2>
+            <div class="glass-card big">
+                <span class="badge">02</span>
+                <h2>Geometric Flow</h2>
+                <p>Complexity of logic. Notice the background transitions as you scroll.</p>
+            </div>
+        </section>
+
+        <section class="page-section left-align">
+            <div class="glass-card mini side-profile">
+                <div class="flex-container">
                     <div id="cube-ui-area"></div>
-                    <div class="slider-control">
-                        <label>Manual Rotation</label>
+                    <div class="slider-aside">
                         <input type="range" id="box-slider" min="0" max="6.28" step="0.01" value="0">
                     </div>
                 </div>
             </div>
         </section>
 
-        <footer id="footer-trigger">
+        <section class="page-section">
+            <div class="glass-card big">
+                <div class="about-me-text">
+                    <h3>About Me</h3>
+                    <p>
+                        I am a creative developer passionate about bridging the gap between 
+                        <strong>art and code</strong>. Specializing in interactive 3D environments, 
+                        I love building digital experiences that feel alive.
+                    </p>
+                </div>
+
+                <div class="social-links">
+                    <a href="https://x.com/Sadrita404" target="_blank" class="social-icon"><i data-lucide="twitter"></i></a>
+                    <a href="https://github.com/Sadrita404" target="_blank" class="social-icon"><i data-lucide="github"></i></a>
+                    <a href="https://www.linkedin.com/in/sadrita-neogi-2a7540376/" target="_blank" class="social-icon"><i data-lucide="linkedin"></i></a>
+                </div>
+            </div>
+        </section>
+
+        <footer>
             <canvas id="particle-canvas"></canvas>
         </footer>
     </div>

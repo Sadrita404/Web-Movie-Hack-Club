@@ -1,144 +1,165 @@
 import * as THREE from 'three';
 
+// --- SCENE SETUP (Sphere, Torus, Stars) ---
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-// --- 1. COOL BACKGROUND ANIMATION (Starfield) ---
-const starGeometry = new THREE.BufferGeometry();
+const starGeo = new THREE.BufferGeometry();
 const starCount = 3000;
-const posArray = new Float32Array(starCount * 3);
-
-for(let i = 0; i < starCount * 3; i++) {
-    posArray[i] = (Math.random() - 0.5) * 100;
-}
-starGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-const starMaterial = new THREE.PointsMaterial({ size: 0.05, color: 0xffffff });
-const stars = new THREE.Points(starGeometry, starMaterial);
+const starPos = new Float32Array(starCount * 3);
+for(let i = 0; i < starCount * 3; i++) { starPos[i] = (Math.random() - 0.5) * 150; }
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 0.1, color: 0xffffff }));
 scene.add(stars);
 
-// --- 2. THE MAIN OBJECTS ---
-const textureLoader = new THREE.TextureLoader();
-
-const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(2, 32, 32),
-    new THREE.MeshBasicMaterial({ color: 0x3b82f6, wireframe: true })
-);
+const sphere = new THREE.Mesh(new THREE.SphereGeometry(2, 32, 32), new THREE.MeshBasicMaterial({ color: 0x3b82f6, wireframe: true }));
 scene.add(sphere);
 
-const torus = new THREE.Mesh(
-    new THREE.TorusKnotGeometry(1.2, 0.4, 100, 16),
-    new THREE.MeshStandardMaterial({ color: 0xec4899, metalness: 0.8, roughness: 0.1 })
-);
-torus.position.x = 30; 
+const torus = new THREE.Mesh(new THREE.TorusKnotGeometry(1, 0.4, 100, 16), new THREE.MeshStandardMaterial({ color: 0xec4899 }));
+torus.position.x = 50; 
 scene.add(torus);
 
-const cubeImg = textureLoader.load('https://drive.google.com/uc?export=view&id=1BY_aOeVS9yY0EMhG40TKfOUVnbwBpObB');
-const cube = new THREE.Mesh(
-    new THREE.BoxGeometry(3, 3, 3),
-    new THREE.MeshStandardMaterial({ map: cubeImg })
-);
-cube.position.y = -30;
+// --- CUBE & SLIDER ---
+const textureLoader = new THREE.TextureLoader();
+const proxyUrl = 'https://images.weserv.nl/?url=drive.google.com/uc?id=1BY_aOeVS9yY0EMhG40TKfOUVnbwBpObB';
+const cube = new THREE.Mesh(new THREE.BoxGeometry(3.5, 3.5, 3.5), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+cube.position.y = -50;
 scene.add(cube);
+textureLoader.load(proxyUrl, (tex) => { cube.material.map = tex; cube.material.needsUpdate = true; });
 
-const light = new THREE.PointLight(0xffffff, 100);
-light.position.set(5, 5, 5);
-scene.add(light, new THREE.AmbientLight(0xffffff, 0.4));
-camera.position.z = 8;
+scene.add(new THREE.DirectionalLight(0xffffff, 2), new THREE.AmbientLight(0xffffff, 0.5));
+camera.position.z = 10;
 
-// --- 3. THEME & PARTICLES ---
-let scrollVelocity = 0;
+let isUserRotating = false;
+let targetRot = 0;
+
+window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY, vh = window.innerHeight;
+    sphere.position.x = -(scrollY / vh) * 15;
+    if (scrollY > vh * 0.7 && scrollY < vh * 1.8) torus.position.x = 8 - ((scrollY - vh) / vh) * 15;
+    else torus.position.x = 50;
+    if (scrollY > vh * 2.0 && scrollY < vh * 3.2) cube.position.y = 0;
+    else cube.position.y = -50;
+});
+
+const slider = document.getElementById('box-slider');
+slider.addEventListener('input', (e) => { 
+    isUserRotating = true;
+    targetRot = parseFloat(e.target.value); 
+});
+
+// --- THEME TOGGLE ---
+const themeBtn = document.getElementById('theme-switch');
+const themeIcon = document.getElementById('theme-icon');
+themeBtn.addEventListener('click', () => {
+    const body = document.body;
+    if (body.classList.contains('dark-mode')) {
+        body.classList.replace('dark-mode', 'light-mode');
+        themeIcon.setAttribute('data-lucide', 'sun');
+        stars.material.color.setHex(0x000000);
+    } else {
+        body.classList.replace('light-mode', 'dark-mode');
+        themeIcon.setAttribute('data-lucide', 'moon');
+        stars.material.color.setHex(0xffffff);
+    }
+    lucide.createIcons();
+});
+
+// --- NEW PARTICLE LOOP LOGIC ---
 const pCanvas = document.getElementById('particle-canvas');
 const pCtx = pCanvas.getContext('2d');
 let particles = [];
-
-class Particle {
-    constructor(x, y) {
-        this.x = Math.random() * pCanvas.width;
-        this.y = Math.random() * pCanvas.height;
-        this.dest = { x, y };
-        this.vel = { x: 0, y: 0 };
-        this.acc = { x: 0, y: 0 };
-        this.color = "#facc15"; 
-    }
-    update() {
-        this.acc.x = (this.dest.x - this.x) / 300;
-        this.acc.y = (this.dest.y - this.y) / 300;
-        this.vel.x = (this.vel.x + this.acc.x) * 0.9;
-        this.vel.y = (this.vel.y + this.acc.y) * 0.9;
-        this.x += this.vel.x; this.y += this.vel.y;
-    }
-    draw() {
-        pCtx.fillStyle = this.color;
-        pCtx.fillRect(this.x, this.y, 2.5, 2.5);
-    }
-}
+let particleState = "assembling"; 
+let stateTimer = 0;
 
 function initParticles() {
-    pCanvas.width = window.innerWidth;
-    pCanvas.height = 500;
-    pCtx.font = "bold " + (pCanvas.width / 10) + "px Arial";
+    pCanvas.width = window.innerWidth; 
+    pCanvas.height = 400;
+    pCtx.font = "bold " + (Math.min(pCanvas.width / 10, 80)) + "px Arial";
     pCtx.textAlign = "center";
-    pCtx.fillText("MADE BY SADRITA", pCanvas.width / 2, pCanvas.height / 2);
+    pCtx.fillText("BY SADRITA", pCanvas.width / 2, pCanvas.height / 2);
+    
     const data = pCtx.getImageData(0, 0, pCanvas.width, pCanvas.height).data;
     particles = [];
-    for (let i = 0; i < pCanvas.width; i += 5) {
-        for (let j = 0; j < pCanvas.height; j += 5) {
-            if (data[(i + j * pCanvas.width) * 4 + 3] > 128) particles.push(new Particle(i, j));
+    for (let i = 0; i < pCanvas.width; i += 6) {
+        for (let j = 0; j < pCanvas.height; j += 6) {
+            if (data[(i + j * pCanvas.width) * 4 + 3] > 128) {
+                particles.push({
+                    x: Math.random() * pCanvas.width,
+                    y: Math.random() * pCanvas.height,
+                    originX: Math.random() * pCanvas.width,
+                    originY: Math.random() * pCanvas.height,
+                    targetX: i,
+                    targetY: j
+                });
+            }
         }
     }
 }
 
-// --- 4. THEME TOGGLE ---
-const themeBtn = document.getElementById('theme-switch');
-themeBtn.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    document.body.classList.toggle('light-mode');
-    const isLight = document.body.classList.contains('light-mode');
-    document.getElementById('theme-icon').setAttribute('data-lucide', isLight ? 'sun' : 'moon');
-    stars.visible = !isLight;
-    lucide.createIcons();
-});
-
-// --- 5. ANIMATION LOOP ---
-window.addEventListener('scroll', (e) => {
-    const scrollY = window.scrollY;
-    const vh = window.innerHeight;
-    scrollVelocity = 2; // Trigger warp effect on scroll
-
-    sphere.position.x = -(scrollY / vh) * 15;
-    if (scrollY > vh * 0.8) {
-        torus.position.x = 5 - ((scrollY - vh) / vh) * 10;
-    } else { torus.position.x = 30; }
-
-    if (scrollY > vh * 1.8) {
-        cube.position.y = 0;
-    } else { cube.position.y = -30; }
-});
-
-document.getElementById('box-slider').addEventListener('input', (e) => {
-    cube.rotation.y = e.target.value;
-});
-
 function animate() {
     requestAnimationFrame(animate);
-    
-    // Background Warp Effect
-    stars.rotation.y += 0.001 + (scrollVelocity * 0.02);
-    scrollVelocity *= 0.95; // Gradually slow down warp
+    stars.rotation.y += 0.001;
+    sphere.rotation.y += 0.005;
 
-    sphere.rotation.y += 0.01;
-    torus.rotation.z += 0.01;
+    if (!isUserRotating) {
+        cube.rotation.y += 0.01;
+        slider.value = cube.rotation.y % 6.28;
+    } else {
+        cube.rotation.y = THREE.MathUtils.lerp(cube.rotation.y, targetRot, 0.1);
+    }
     
     pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
-    particles.forEach(p => { p.update(); p.draw(); });
-    
+    stateTimer++;
+
+    particles.forEach(p => {
+        let tx, ty;
+
+        if (particleState === "assembling") {
+            tx = p.targetX;
+            ty = p.targetY;
+            // 0.5 sec (30 frames)
+            if (stateTimer > 30) { 
+                particleState = "holding"; 
+                stateTimer = 0; 
+            }
+        } 
+        else if (particleState === "holding") {
+            tx = p.targetX;
+            ty = p.targetY;
+            // 0.5 sec (30 frames)
+            if (stateTimer > 30) { 
+                particleState = "dispersing"; 
+                stateTimer = 0; 
+            }
+        } 
+        else if (particleState === "dispersing") {
+            tx = p.originX;
+            ty = p.originY;
+            // 0.5 sec (30 frames)
+            if (stateTimer > 30) { 
+                particleState = "assembling"; 
+                stateTimer = 0; 
+                p.originX = Math.random() * pCanvas.width;
+                p.originY = Math.random() * pCanvas.height;
+            }
+        }
+
+        // Increased speed (0.15) for shorter duration
+        p.x += (tx - p.x) * 0.15;
+        p.y += (ty - p.y) * 0.15;
+
+        pCtx.fillStyle = "#facc15";
+        pCtx.fillRect(p.x, p.y, 2, 2);
+    });
+
     renderer.render(scene, camera);
 }
 
-initParticles();
+initParticles(); 
 animate();
 lucide.createIcons();
 
