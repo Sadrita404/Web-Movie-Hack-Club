@@ -36,7 +36,11 @@ let targetRot = 0;
 
 window.addEventListener('scroll', () => {
     const scrollY = window.scrollY, vh = window.innerHeight;
+    
+    // Moved sphere.position.y to 3 to keep it above the text box
+    sphere.position.y = 3; 
     sphere.position.x = -(scrollY / vh) * 15;
+
     if (scrollY > vh * 0.7 && scrollY < vh * 1.8) torus.position.x = 8 - ((scrollY - vh) / vh) * 15;
     else torus.position.x = 50;
     if (scrollY > vh * 2.0 && scrollY < vh * 3.2) cube.position.y = 0;
