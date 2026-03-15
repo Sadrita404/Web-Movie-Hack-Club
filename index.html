@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Port-Demo | Sadrita</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="dark-mode">
+
+    <div id="canvas-container"></div>
+
+    <div id="theme-switch" title="Toggle Day/Night">
+        <i data-lucide="moon" id="theme-icon"></i>
+    </div>
+
+    <div class="content">
+        <section class="page-section">
+            <div class="blog-container left">
+                <div class="glass-card big">
+                    <h2>The Digital Void</h2>
+                    <p>Welcome to the core. This hollow sphere represents the blueprint of 3D architecture. As you scroll, notice how the background stars accelerate, creating a warp-speed effect that transitions you through the digital dimensions of this portfolio.</p>
+                </div>
+            </div>
+            <div class="placeholder"></div>
+        </section>
+
+        <section class="page-section">
+            <div class="placeholder"></div>
+            <div class="blog-container right">
+                <div class="glass-card big">
+                    <h2>Geometric Flow</h2>
+                    <p>The Torus Knot symbolizes the complexity of logic and interconnected systems. By increasing the spacing between these sections, we allow the 3D geometry to breathe, giving the user a moment of visual clarity before moving to the next insight.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="page-section">
+            <div class="box-interface">
+                <div class="glass-card big full">
+                    <h2>Identity Cube</h2>
+                    <div id="cube-ui-area"></div>
+                    <div class="slider-control">
+                        <label>Manual Rotation</label>
+                        <input type="range" id="box-slider" min="0" max="6.28" step="0.01" value="0">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer id="footer-trigger">
+            <canvas id="particle-canvas"></canvas>
+        </footer>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+            }
+        }
+    </script>
+    <script type="module" src="script.js"></script>
+</body>
+</html>

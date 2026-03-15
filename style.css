@@ -1,0 +1,79 @@
+:root {
+    --bg-dark: #020617;
+    --bg-light: #f1f5f9;
+    --glass-dark: rgba(15, 23, 42, 0.7);
+    --glass-light: rgba(255, 255, 255, 0.7);
+    --text-dark: #f8fafc;
+    --text-light: #1e293b;
+    --accent-yellow: #facc15;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    transition: background-color 0.5s ease;
+    overflow-x: hidden;
+}
+
+body.dark-mode { background-color: var(--bg-dark); color: var(--text-dark); }
+body.light-mode { background-color: var(--bg-light); color: var(--text-light); }
+
+#canvas-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+}
+
+#theme-switch {
+    position: fixed;
+    top: 30px; right: 30px;
+    z-index: 100;
+    cursor: pointer;
+    background: var(--accent-yellow);
+    padding: 12px;
+    border-radius: 50%;
+    display: flex;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.page-section {
+    min-height: 120vh; /* Increased height for more scroll gap */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 10%;
+}
+
+/* Bigger Text Boxes */
+.glass-card.big {
+    padding: 3.5rem;
+    border-radius: 32px;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1);
+    width: 100%;
+    max-width: 650px; /* Increased width */
+    line-height: 1.8;
+    font-size: 1.1rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.glass-card h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--accent-yellow);
+}
+
+body.dark-mode .glass-card { background: var(--glass-dark); }
+body.light-mode .glass-card { background: var(--glass-light); border: 1px solid rgba(0,0,0,0.1); }
+
+#cube-ui-area { height: 400px; width: 100%; }
+
+#particle-canvas { width: 100%; height: 500px; }
+
+footer {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
