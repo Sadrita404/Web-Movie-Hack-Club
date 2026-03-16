@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 
-// --- Initialization ---
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -8,7 +7,6 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-// --- Responsive Smooth Cursor Logic ---
 const cursor = document.getElementById('custom-cursor');
 let mouseX = 0, mouseY = 0; 
 let cursorX = 0, cursorY = 0; 
@@ -30,7 +28,6 @@ function updateCursor() {
 }
 updateCursor();
 
-// --- Click Pop-out ---
 document.addEventListener('click', (e) => {
     const pop = document.createElement('img');
     pop.src = "https://assets.hackclub.com/flag-orpheus-top.svg";
@@ -41,7 +38,6 @@ document.addEventListener('click', (e) => {
     setTimeout(() => pop.remove(), 350);
 });
 
-// --- World Building: Stars ---
 const starGeo = new THREE.BufferGeometry();
 const starCount = 4000;
 const starPos = new Float32Array(starCount * 3);
@@ -50,7 +46,6 @@ starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
 const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 0.12, color: 0xffffff }));
 scene.add(stars);
 
-// --- 3D Gallery Objects ---
 const sphere = new THREE.Mesh(
     new THREE.SphereGeometry(2, 32, 32), 
     new THREE.MeshBasicMaterial({ color: 0x3b82f6, wireframe: true })
@@ -76,7 +71,6 @@ const quantum = new THREE.Mesh(
 quantum.position.x = 60;
 scene.add(quantum);
 
-// --- Texture Cube (Sadrita Profile) ---
 const textureLoader = new THREE.TextureLoader();
 const proxyUrl = 'https://images.weserv.nl/?url=drive.google.com/uc?id=1BY_aOeVS9yY0EMhG40TKfOUVnbwBpObB';
 const cube = new THREE.Mesh(
@@ -90,13 +84,11 @@ textureLoader.load(proxyUrl, (tex) => {
     cube.material.needsUpdate = true; 
 });
 
-// Lighting
 const light = new THREE.DirectionalLight(0xffffff, 2.5);
 light.position.set(5, 5, 5);
 scene.add(light, new THREE.AmbientLight(0xffffff, 0.4));
 camera.position.z = 12;
 
-// --- Scroll & Parallax Engine ---
 window.addEventListener('scroll', () => {
     const scrollY = window.scrollY, vh = window.innerHeight;
     sphere.position.y = 2.5; 
@@ -117,7 +109,6 @@ window.addEventListener('scroll', () => {
     if (scrollY > vh * 4.5) cube.position.y = 0; else cube.position.y = -60;
 });
 
-// --- Manual Rotation Slider ---
 const slider = document.getElementById('box-slider');
 let isManualRotation = false;
 slider.addEventListener('input', (e) => {
@@ -127,7 +118,6 @@ slider.addEventListener('input', (e) => {
     window.sliderTimeout = setTimeout(() => { isManualRotation = false; }, 2000);
 });
 
-// --- Theme Management ---
 const themeBtn = document.getElementById('theme-switch');
 themeBtn.addEventListener('click', () => {
     const body = document.body;
@@ -144,7 +134,6 @@ themeBtn.addEventListener('click', () => {
     lucide.createIcons();
 });
 
-// --- Snake Game Logic ---
 const sCanvas = document.getElementById('snake-game');
 const sCtx = sCanvas.getContext('2d');
 let box = 20, d = null, score = 0;
@@ -198,7 +187,6 @@ function collision(head, array) {
 }
 setInterval(drawSnake, 120);
 
-// --- Particle Logo Canvas ---
 const pCanvas = document.getElementById('particle-canvas');
 const pCtx = pCanvas.getContext('2d');
 let particles = [];
@@ -229,11 +217,9 @@ function initParticles() {
     }
 }
 
-// --- Main Animation Loop ---
 function animate() {
     requestAnimationFrame(animate);
     
-    // Auto-rotations
     stars.rotation.y += 0.0008;
     sphere.rotation.y += 0.01;
     lattice.rotation.x += 0.01;
@@ -245,10 +231,6 @@ function animate() {
         cube.rotation.x += 0.005;
     }
 
-    // --- UPDATED PARTICLE LOGIC (1.5s Cycle) ---
-    // Total Cycle: 90 frames (1.5s at 60fps)
-    // Phase 1 (Hold): 0 to 60 frames (1.0s)
-    // Phase 2 (Shatter): 61 to 90 frames (0.5s)
     pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
     stateTimer++;
     
@@ -256,17 +238,14 @@ function animate() {
         let tx, ty;
         
         if (stateTimer <= 60) { 
-            // Phase 1: Form and Hold Text (1.0s)
             tx = p.targetX; 
             ty = p.targetY;
         } else {
-            // Phase 2: Shatter and Disperse (0.5s)
             tx = p.originX; 
             ty = p.originY;
-            if(stateTimer >= 90) stateTimer = 0; // Reset every 1.5 seconds
+            if(stateTimer >= 90) stateTimer = 0;
         }
         
-        // Lerp factor adjusted for smooth movement
         p.x += (tx - p.x) * 0.18; 
         p.y += (ty - p.y) * 0.18;
         
