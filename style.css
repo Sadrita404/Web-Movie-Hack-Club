@@ -13,10 +13,9 @@ body {
     font-family: 'Inter', sans-serif;
     transition: background-color 0.5s ease, color 0.5s ease;
     overflow-x: hidden;
-    cursor: none; /* Required for custom cursor */
+    cursor: none;
 }
 
-/* Custom Responsive Pointer */
 #custom-cursor {
     position: fixed;
     pointer-events: none;
@@ -61,10 +60,9 @@ body.light-mode { background-color: var(--bg-light); color: var(--text-light); }
 .glass-card { backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
 .glass-card.big { padding: 3rem; border-radius: 40px; width: 90%; max-width: 600px; text-align: center; }
 
-/* Image Box Layout Fix */
 .image-box-layout {
     display: flex;
-    flex-direction: row; /* Horizontal layout */
+    flex-direction: row;
     align-items: center;
     gap: 30px;
 }
@@ -85,12 +83,11 @@ body.light-mode { background-color: var(--bg-light); color: var(--text-light); }
 
 #cube-ui-area { height: 180px; width: 180px; }
 input[type="range"] { 
-    writing-mode: bt-lr; /* Vertical look for some browsers */
+    writing-mode: bt-lr;
     width: 120px; 
     accent-color: var(--accent); 
 }
 
-/* Snake Game Styling */
 .game-instructions {
     margin-top: 15px;
     font-size: 0.9rem;
