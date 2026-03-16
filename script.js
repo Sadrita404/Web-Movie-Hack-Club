@@ -22,7 +22,6 @@ const torus = new THREE.Mesh(new THREE.TorusKnotGeometry(1, 0.4, 100, 16), new T
 torus.position.x = 50; 
 scene.add(torus);
 
-// New Shapes with Dynamic Materials
 const latticeMat = new THREE.PointsMaterial({ color: 0xfacc15, size: 0.1 });
 const lattice = new THREE.Points(new THREE.IcosahedronGeometry(2, 1), latticeMat);
 lattice.position.x = 50;
@@ -46,63 +45,52 @@ camera.position.z = 10;
 let isUserRotating = false;
 let targetRot = 0;
 
-// --- Theme Switch Logic ---
+// --- Theme Switch ---
 const themeBtn = document.getElementById('theme-switch');
 const themeIcon = document.getElementById('theme-icon');
 
 themeBtn.addEventListener('click', () => {
     const body = document.body;
-    const isDark = body.classList.contains('dark-mode');
-
-    if (isDark) {
+    if (body.classList.contains('dark-mode')) {
         body.classList.replace('dark-mode', 'light-mode');
         themeIcon.setAttribute('data-lucide', 'sun');
         stars.material.color.setHex(0x000000);
-        
-        // Change New Shapes to Dark Blue for visibility in Light Mode
         lattice.material.color.setHex(0x00008B); 
-        sphere.material.color.setHex(0x1e40af); // Darker blue sphere
+        sphere.material.color.setHex(0x1e40af);
     } else {
         body.classList.replace('light-mode', 'dark-mode');
         themeIcon.setAttribute('data-lucide', 'moon');
         stars.material.color.setHex(0xffffff);
-        
-        // Change New Shapes back to Accent Yellow
         lattice.material.color.setHex(0xfacc15);
         sphere.material.color.setHex(0x3b82f6);
     }
     lucide.createIcons();
 });
 
-// --- Scroll & Animation Logic ---
+// --- Scroll Logic ---
 window.addEventListener('scroll', () => {
     const scrollY = window.scrollY, vh = window.innerHeight;
-    
     sphere.position.y = 3; 
     sphere.position.x = scrollY < vh ? -(scrollY / vh) * 15 : -50;
-
     if (scrollY > vh * 0.7 && scrollY < vh * 1.8) torus.position.x = 8 - ((scrollY - vh) / vh) * 15;
     else torus.position.x = 50;
-
     if (scrollY > vh * 1.9 && scrollY < vh * 3.0) lattice.position.x = 8 - ((scrollY - vh * 2.2) / vh) * 15;
     else lattice.position.x = 50;
-
     if (scrollY > vh * 3.1 && scrollY < vh * 4.2) quantum.position.x = 8 - ((scrollY - vh * 3.4) / vh) * 15;
     else quantum.position.x = 50;
-
     if (scrollY > vh * 4.5 && scrollY < vh * 6.0) cube.position.y = 0;
     else cube.position.y = -50;
 });
 
-// --- Rest of your original code (Snake, Particles, Sliders) stays exactly the same ---
 const slider = document.getElementById('box-slider');
 slider.addEventListener('input', (e) => { 
     isUserRotating = true;
     targetRot = parseFloat(e.target.value); 
 });
 
+// --- Particle Logic (Updated for Bigger Text) ---
 const pCanvas = document.getElementById('particle-canvas');
-const pCtx = pCanvas.getContext('2d');
+const pCtx = pCanvas.getContext('2d', { willReadFrequently: true });
 let particles = [];
 let particleState = "assembling"; 
 let stateTimer = 0;
@@ -110,8 +98,10 @@ let stateTimer = 0;
 function initParticles() {
     pCanvas.width = window.innerWidth; 
     pCanvas.height = 400;
-    pCtx.font = "bold " + (Math.min(pCanvas.width / 10, 80)) + "px Arial";
+    // Increased font size multiplier from 10 to 7 and cap from 80 to 120
+    pCtx.font = "bold " + (Math.min(pCanvas.width / 7, 120)) + "px Arial";
     pCtx.textAlign = "center";
+    pCtx.textBaseline = "middle"; // Improved centering
     pCtx.fillText("BY SADRITA", pCanvas.width / 2, pCanvas.height / 2);
     
     const data = pCtx.getImageData(0, 0, pCanvas.width, pCanvas.height).data;
@@ -132,6 +122,7 @@ function initParticles() {
     }
 }
 
+// --- Snake Game ---
 const sCanvas = document.getElementById('snake-game');
 const sCtx = sCanvas.getContext('2d');
 const scoreEl = document.getElementById('score-board');
@@ -165,13 +156,11 @@ function drawSnake() {
     if( d == "UP") snakeY -= box;
     if( d == "RIGHT") snakeX += box;
     if( d == "DOWN") snakeY += box;
-
     if(snakeX == food.x && snakeY == food.y) {
         score++;
         scoreEl.innerHTML = "Score: " + score;
         food = { x: Math.floor(Math.random() * 15) * box, y: Math.floor(Math.random() * 15) * box };
     } else { snake.pop(); }
-
     let newHead = { x: snakeX, y: snakeY };
     if(snakeX < 0 || snakeX >= sCanvas.width || snakeY < 0 || snakeY >= sCanvas.height || collision(newHead, snake)) {
         clearInterval(game);
@@ -187,6 +176,7 @@ function collision(head, array) {
 }
 let game = setInterval(drawSnake, 150);
 
+// --- Main Loop ---
 function animate() {
     requestAnimationFrame(animate);
     stars.rotation.y += 0.001;
