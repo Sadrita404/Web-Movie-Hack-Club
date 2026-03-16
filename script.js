@@ -1,3 +1,7 @@
+/**
+ * This code is written by Sadrita Neogi
+ */
+
 import * as THREE from 'three';
 
 const scene = new THREE.Scene();
