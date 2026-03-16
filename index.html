@@ -9,7 +9,11 @@
 </head>
 <body class="dark-mode">
 
-    <div id="custom-cursor"></div>
+    <div id="custom-cursor">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="var(--accent)" stroke="black" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.83-4.83 3.06 7.15c.13.31.47.46.78.33l2.22-.95c.31-.13.46-.47.33-.78l-3.05-7.13 6.32-.1c.46 0 .68-.56.33-.87L6.37 2.87c-.33-.3-.87-.08-.87.34Z"/>
+        </svg>
+    </div>
 
     <a href="https://hackclub.com/">
         <img style="position: fixed; top: 0; left: 10px; border: 0; width: 256px; z-index: 999;" src="https://assets.hackclub.com/flag-orpheus-top.svg" alt="Hack Club"/>
@@ -30,7 +34,6 @@
                 <div class="object-data">
                     <p><strong>Geometry:</strong> Sphere (32 segments)</p>
                     <p><strong>Material:</strong> Wireframe Mesh</p>
-                    <p><strong>Logic:</strong> This object represents the foundation of spatial computing.</p>
                 </div>
             </div>
         </section>
@@ -73,11 +76,12 @@
 
         <section class="page-section left-align">
             <div class="glass-card mini side-profile">
-                <div class="flex-container">
-                    <div id="cube-ui-area"></div>
+                <div class="flex-container image-box-layout">
                     <div class="slider-aside">
                         <input type="range" id="box-slider" min="0" max="6.28" step="0.01" value="0">
+                        <label for="box-slider" class="slider-label">ROTATE</label>
                     </div>
+                    <div id="cube-ui-area"></div>
                 </div>
             </div>
         </section>
@@ -86,7 +90,7 @@
             <div class="glass-card big">
                 <div class="about-me-text">
                     <h3>About Me</h3>
-                    <p>Specializing in interactive 3D environments.</p>
+                    <p>Creative developer bridging art and code through spatial mathematics and interactive design.</p>
                 </div>
                 <div class="social-links">
                     <a href="https://x.com/Sadrita404" target="_blank" class="social-icon"><i data-lucide="twitter"></i></a>
@@ -101,6 +105,9 @@
                 <h3>Snake Game</h3>
                 <div id="score-board">Score: 0</div>
                 <canvas id="snake-game" width="300" height="300"></canvas>
+                <div class="game-instructions">
+                    <p><i data-lucide="keyboard"></i> Use <b>Arrow Keys</b> to Move</p>
+                </div>
             </div>
         </section>
 
