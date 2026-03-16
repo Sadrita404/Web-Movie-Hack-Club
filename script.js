@@ -88,7 +88,7 @@ slider.addEventListener('input', (e) => {
     targetRot = parseFloat(e.target.value); 
 });
 
-// --- Particle Logic (Updated for Bigger Text) ---
+// --- Particles ---
 const pCanvas = document.getElementById('particle-canvas');
 const pCtx = pCanvas.getContext('2d', { willReadFrequently: true });
 let particles = [];
@@ -98,10 +98,9 @@ let stateTimer = 0;
 function initParticles() {
     pCanvas.width = window.innerWidth; 
     pCanvas.height = 400;
-    // Increased font size multiplier from 10 to 7 and cap from 80 to 120
     pCtx.font = "bold " + (Math.min(pCanvas.width / 7, 120)) + "px Arial";
     pCtx.textAlign = "center";
-    pCtx.textBaseline = "middle"; // Improved centering
+    pCtx.textBaseline = "middle";
     pCtx.fillText("BY SADRITA", pCanvas.width / 2, pCanvas.height / 2);
     
     const data = pCtx.getImageData(0, 0, pCanvas.width, pCanvas.height).data;
@@ -176,7 +175,6 @@ function collision(head, array) {
 }
 let game = setInterval(drawSnake, 150);
 
-// --- Main Loop ---
 function animate() {
     requestAnimationFrame(animate);
     stars.rotation.y += 0.001;
